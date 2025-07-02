@@ -11,20 +11,23 @@
   }
 
   onMounted(() => document.addEventListener("keydown", handleKeyDown));
-  onUnmounted(() => document.addEventListener("keydown", handleKeyDown));
+  onUnmounted(() => document.removeEventListener("keydown", handleKeyDown));
+
 </script>
 
 <template>
-  <div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
+  <div @click.self="$emit('closePopup')" class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
     <div class="inner">
+
       <ModalCloseButton @click="$emit('closePopup')" />
 
-      <div class="form">Your Popup Content Goes Here</div>
+      <slot></slot>
+      
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
   .modal-wrapper {
     position: fixed;
     left: 0;

@@ -1,22 +1,28 @@
 <script setup>
   import { computed } from "vue";
 
-  const { reactiveTask } = defineProps({
-    reactiveTask: Object,
+  const { filteredTasks } = defineProps({
+    filteredTasks: Object,
   });
 
-  const isTaskDone = computed(() => reactiveTask?.completed);
+  //   const isTaskDone = computed(() => filteredTasks?.completed);
 </script>
 
 <template>
   <div class="task">
-    <h3>{{ reactiveTask.name }}</h3>
-    <p>{{ reactiveTask.description }}</p>
+    <h3>{{ filteredTasks.name }}</h3>
+    <p>{{ filteredTasks.description }}</p>
 
     <div class="task-check">
-      <input @click="$emit('toggleCompleted', reactiveTask.id)" :id="'input-done-task-' + reactiveTask.id" type="checkbox" :checked="isTaskDone" />
-      <label :for="'input-done-task-' + reactiveTask.id">
-        {{ isTaskDone ? "Done" : "To-Do" }}
+      <input
+        @click="$emit('toggleCompleted', filteredTasks.id)"
+        :id="'input-done-task-' + filteredTasks.id"
+        type="checkbox"
+        :checked="filteredTasks?.completed"
+      />
+
+      <label :for="'input-done-task-' + filteredTasks.id">
+        {{ filteredTasks?.completed ? "Done" : "To-Do" }}
       </label>
     </div>
   </div>
