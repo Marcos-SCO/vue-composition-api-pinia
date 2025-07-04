@@ -14,6 +14,10 @@
   const appName = "Tasks Manager";
 
   // console.log(store.filteredTasks);
+
+  store.$subscribe((mutation, state) => {
+    localStorage.setItem("tasks", JSON.stringify(state.reactiveTasks));
+  });
 </script>
 
 <template>
@@ -34,7 +38,7 @@
 
     <div class="tasks">
       <div v-if="store.filteredTasks.length < 1">
-        <p>No more {{ store.filterLabels.getLabel(store.filterBy) }} tasks...</p>
+        <p>No {{ store.filterLabels.getLabel(store.filterBy) }} tasks added...</p>
       </div>
 
       <!-- @toggleCompleted="store.handleToggleCompleted" -->

@@ -7,7 +7,9 @@ import { useModalStore } from "./modalStore";
 
 export const useTasksStore = defineStore('tasks', () => {
 
-    const reactiveTasks = reactive(tasks);
+    // const reactiveTasks = reactive(tasks);
+    const reactiveTasks = reactive(JSON.parse(localStorage.getItem("tasks")) ?? []);
+
 
     let filterBy = ref("");
 
