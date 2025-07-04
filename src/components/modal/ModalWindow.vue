@@ -1,28 +1,31 @@
 <script setup>
   import { onMounted, onUnmounted } from "vue";
   import ModalCloseButton from "./ModalCloseButton.vue";
+  import { useModalStore } from "../../stores/modalStore";
 
-  const emitKeyBoard = defineEmits(["closePopup"]);
+  const store = useModalStore();
+
+  // const emitKeyBoard = defineEmits(["closePopup"]);
 
   function handleKeyDown(e) {
     if (e.key === "Escape") {
-      emitKeyBoard("closePopup");
+      // emitKeyBoard("closePopup");
+      store.closeModal();
     }
   }
 
   onMounted(() => document.addEventListener("keydown", handleKeyDown));
   onUnmounted(() => document.removeEventListener("keydown", handleKeyDown));
 
+  // @click="$emit('closePopup')
 </script>
 
 <template>
-  <div @click.self="$emit('closePopup')" class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
+  <div @click.self="store.closeModal()" class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
     <div class="inner">
-
-      <ModalCloseButton @click="$emit('closePopup')" />
+      <ModalCloseButton @click="store.closeModal()" />
 
       <slot></slot>
-      
     </div>
   </div>
 </template>

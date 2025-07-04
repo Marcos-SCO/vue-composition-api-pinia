@@ -1,28 +1,33 @@
 <script setup>
   import { computed } from "vue";
+  import { useTasksStore } from "../stores/tasksStore";
 
-  const { filteredTasks } = defineProps({
-    filteredTasks: Object,
-  });
+  const { filteredTask } = defineProps({ filteredTask: Object });
 
-  //   const isTaskDone = computed(() => filteredTasks?.completed);
+  const store = useTasksStore();
+
+  // const isTaskDone = computed(() => filteredTask?.completed);
+
+  // @click="$emit('toggleCompleted', filteredTask.id)"
 </script>
 
 <template>
   <div class="task">
-    <h3>{{ filteredTasks.name }}</h3>
-    <p>{{ filteredTasks.description }}</p>
+    <p>{{ filteredTask.id }}</p>
+    <h3>{{ filteredTask.name }}</h3>
+    <p>{{ filteredTask.description }}</p>
 
     <div class="task-check">
       <input
-        @click="$emit('toggleCompleted', filteredTasks.id)"
-        :id="'input-done-task-' + filteredTasks.id"
+        @click="store.handleToggleCompleted(filteredTask.id)"
+        :key="'input-done-task-' + filteredTask.id"
+        :id="'input-done-task-' + filteredTask.id"
         type="checkbox"
-        :checked="filteredTasks?.completed"
+        :checked="filteredTask?.completed"
       />
 
-      <label :for="'input-done-task-' + filteredTasks.id">
-        {{ filteredTasks?.completed ? "Done" : "To-Do" }}
+      <label :for="'input-done-task-' + filteredTask.id">
+        {{ filteredTask?.completed ? "Done" : "To-Do" }}
       </label>
     </div>
   </div>

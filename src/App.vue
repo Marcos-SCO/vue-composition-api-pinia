@@ -1,65 +1,19 @@
 <script setup>
   import { ref, reactive, computed } from "vue";
-  import tasks from "./utils/tasks";
 
   import Task from "./components/Task.vue";
   import Filter from "./components/Filter.vue";
   import ModalWindow from "./components/modal/ModalWindow.vue";
   import AddTaskModal from "./components/modal/AddTaskModal.vue";
+  import { useTasksStore } from "./stores/tasksStore";
+  import { useModalStore } from "./stores/modalStore";
+
+  const store = useTasksStore();
+  const modalStore = useModalStore();
 
   const appName = "Tasks Manager";
 
-  const reactiveTasks = reactive(tasks);
-
-  let newTask = { completed: false };
-
-  let filterBy = ref("");
-
-  let modalIsActive = ref(false);
-
-  const filteredTasks = computed(() => {
-    switch (filterBy.value) {
-      case "todo":
-        return reactiveTasks.filter((task) => !task.completed);
-        break;
-      case "done":
-        return reactiveTasks.filter((task) => task.completed);
-        break;
-      case "":
-        return reactiveTasks;
-        break;
-    }
-  });
-
-  function addTask() {
-    const newTaskName = newTask.name?.trim();
-    const newTaskDescription = newTask.description?.trim();
-
-    if (!newTaskName || !newTaskDescription) {
-      alert("Please enter the tittle and description of the task!");
-      return;
-    }
-
-    newTask.id = Math.max(...reactiveTasks.map((tasks) => tasks.id)) + 1;
-
-    reactiveTasks.push(newTask);
-
-    newTask = { completed: false };
-  }
-
-  function handleToggleCompleted(taskId) {
-    reactiveTasks.forEach((task) => {
-      if (task.id == taskId) {
-        task.completed = !task.completed;
-
-        console.log(task);
-      }
-    });
-  }
-
-  function setFilter(value) {
-    filterBy.value = value;
-  }
+  // console.log(store.filteredTasks);
 </script>
 
 <template>
@@ -70,25 +24,25 @@
       </div>
 
       <div class="header-side">
-        <button @click="modalIsActive = true" class="btn-secondary">+ Add task</button>
+        <button @click="modalStore.openModal()" class="btn secondary">+ Add task</button>
       </div>
 
       <!-- <input type="text" v-model="appName" /> -->
     </div>
 
-    <Filter @setFilter="setFilter" :filterBy="filterBy" />
+    <Filter />
 
     <div class="tasks">
-      <Task
-        @toggleCompleted="handleToggleCompleted"
-        :filteredTasks="filteredTasks"
-        :key="taskIndex"
-        v-for="(filteredTasks, taskIndex) in filteredTasks"
-      />
+      <div v-if="store.filteredTasks.length < 1">
+        <p>No more {{ store.filterLabels.getLabel(store.filterBy) }} tasks...</p>
+      </div>
+
+      <!-- @toggleCompleted="store.handleToggleCompleted" -->
+      <Task :filteredTask="filteredTask" :key="taskIndex" v-for="(filteredTask, taskIndex) in store.filteredTasks" />
     </div>
 
-    <ModalWindow @closePopup="modalIsActive = false" v-if="modalIsActive">
-      <AddTaskModal/>
+    <ModalWindow v-if="modalStore.modalIsActive">
+      <AddTaskModal />
     </ModalWindow>
   </main>
 </template>
@@ -143,5 +97,62 @@
       width: 360px;
       margin-top: 12px;
     }
+  }
+
+  :root {
+    --primary-color: #2b1887;
+    --secondary-color: #2d41a7;
+    --gray-color: #dddddd;
+    --white-color: #ffffff;
+    --black-color: #000000;
+  }
+
+  body {
+    background-color: var(--primary-color);
+    color: #fff;
+    height: 100%;
+    padding: 60px;
+  }
+
+  .container {
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  .btn {
+    border-radius: 8px;
+    height: 38px;
+    padding-inline: 9px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0em;
+    text-align: left;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn.primary {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+  }
+
+  .btn.secondary {
+    background-color: var(--secondary-color);
+    color: var(--white-color);
+  }
+
+  .btn.gray {
+    background-color: var(--gray-color);
+    color: var(--black-color);
+  }
+
+  .close-btn {
+    width: 14px;
+    height: 14px;
   }
 </style>
